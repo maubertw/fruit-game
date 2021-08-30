@@ -1,10 +1,15 @@
 extends layout
-
 block content
+  
   h1= title
   p Welcome tsomething changedo #{title}
   p  #{msg}
-  ul 
-  -each val in values 
-      li= val
+
+  p #{values}
+
+  //- -each val in values
+  //-   p -----------------------
+  //-   -each v, index in val 
+  //-       p #{index + ': ' + val[index]}
+
 
