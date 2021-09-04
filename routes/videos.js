@@ -46,8 +46,9 @@ router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', function(req, re
           iFrames.push(data[d])
         }
       }
-      const start = iFrames[16].best_effort_timestamp_time
-      const end = iFrames[17].best_effort_timestamp_time
+      const frame = req.params.groupIndex
+      const start = iFrames[frame].best_effort_timestamp_time
+      const end = iFrames[frame+1].best_effort_timestamp_time
       console.log('start end ', start, end)
 
       const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c copy ./public/images/output6.mp4`
