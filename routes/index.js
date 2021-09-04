@@ -3,7 +3,7 @@ let router = express.Router();
 
 
 router.get('/', function(req, res, next) {
-  res.send('this is the root page');
+  res.render('index');
 });
 
 
