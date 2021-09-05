@@ -26,6 +26,10 @@ router.get('/:videoId.mp4/group-of-pictures.json', function(req, res, next) {
   
 // GET ONE GOP  
 router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', function(req, res, next) {
+  // TODO:
+  // SEND TO CORRECT PAGE
+  // DONT WRITE TO DISk
+
   // this is writting a single file to disk so far from timestamp to timestamp
   const command = `"ffprobe" -show_frames -print_format json ./public/images/${req.params.videoName + '.mp4'}`
   exec(
@@ -42,11 +46,12 @@ router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', function(req, re
       const data = JSON.parse(stdout.toString())['frames'];
       const iFrames = utilFunctions.filterIFrames(data);
       // Get the desired index and grab the timestamps from it and the following frame
-      const frame = req.params.groupIndex;
+      const frame = parseInt(req.params.groupIndex);
       const start = utilFunctions.getBestEffortTimestampTime(iFrames, frame);
       const end = utilFunctions.getBestEffortTimestampTime(iFrames, frame+1);
       // Build and execute the command to get the json
-      const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c copy ./public/images/output6.mp4`
+      // const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c copy ./public/images/output6.mp4`
+      const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c copy -movflags empty_moov -f hls pipe: | hls`
       exec(
         frameCommand, 
         {maxBuffer: 10240*5000},
@@ -58,13 +63,26 @@ router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', function(req, re
             console.log(`stderr: ${stderr}`);
           }
           console.log('std out', stdout)
-          res.send(stdout)
+          res.render('gop-detail', {
+            clip: stdout
+          })
         });
   });
 });
 
+
+/* GET home page. */
+// router.get('/', function(req, res, next) {
+//   res.render('index', { 
+//     title: 'Express', 
+//     msg: 'Mary and her coding',
+//     values: ['hello', 'world', 'heeeeeeeyyyy!!!', 'zomsfhivn'],
+//   });
+// });
   
 // GET All GOP
+// -movflags frag_keyframe: https://ffmpeg.org/ffmpeg-formats.html
+// Start a new fragment at each video keyframe.
 router.get('/:videoName.mp4/group-of-pictures', function(req, res, next) {
   // Figure out how to serve these files to the client
   // figure out how to delete the files, or maybe send w/o generating?

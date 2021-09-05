@@ -7,3 +7,13 @@ router.get('/', function(req, res, next) {
 });
 
 module.exports = router;
+
+
+/* GET home page. */
+// router.get('/', function(req, res, next) {
+//   res.render('index', { 
+//     title: 'Express', 
+//     msg: 'Mary and her coding',
+//     values: ['hello', 'world', 'heeeeeeeyyyy!!!', 'zomsfhivn'],
+//   });
+// });

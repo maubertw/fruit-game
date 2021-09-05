@@ -3,8 +3,7 @@ const { exec, execSync } = require('child_process');
 const filterIFrames = (data) => {
     const iFrames = [];
     for(let d in data) {
-        if(data[d].pict_type === 'I') {
-            console.log('hi!')
+        if(data[d].pict_type == 'I') {
             iFrames.push(data[d]);
         }
     }
@@ -12,6 +11,7 @@ const filterIFrames = (data) => {
 }
 
 const getBestEffortTimestampTime = (iFrames, startIndex) => {
+    console.log('frames and ind ', iFrames, startIndex)
     return iFrames[startIndex].best_effort_timestamp_time;
 }
 
