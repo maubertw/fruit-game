@@ -26,6 +26,47 @@ module.exports = {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // COME BACK TO THESE AND FIGURE OUT THE PROMISE BUFFER SITUATION
 // Print any errors, and gets JSON parsed stdout or null if it can't be parsed
 // const getChildProcessData = (error, stdout, stderr) => {
