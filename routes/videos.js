@@ -3,6 +3,11 @@ let router = express.Router();
 const { exec } = require('child_process');
 const utilFunctions = require('../public/javascripts/utils');
 
+// two helper string that I found: https://stackoverflow.com/questions/22908987/send-ffmpeg-segmented-files-to-remote-location
+// ffmpeg -i CoolVideo.mp4 -map 0 -codec:v libx264 -codec:a mp4 -f segment -flags -global_header -segment_format mpegts -segment_time 10 "http://localhost/3000"segment%03d.ts
+
+// https://stackoverflow.com/questions/33718810/ffmpeg-how-to-pass-http-headers
+// ffmpeg -i CoolVideo.mp4 -movflags empty_moov -y -timeout 50000 -map 0:0 -an -sn -f mp4 -headers "User Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/46.0.2490.80 Safari/537.36" -headers "X-Forwarded-For: 24.148.85.30" http://localhost:3000/videos -v trace
 
 // GET JSON DATA
 router.get('/:videoId.mp4/group-of-pictures.json', function(req, res, next) {
@@ -51,10 +56,16 @@ router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', function(req, re
       const end = utilFunctions.getBestEffortTimestampTime(iFrames, frame+1);
       // Build and execute the command to get the json
       // const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c copy ./public/images/output6.mp4`
-      const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c copy -movflags empty_moov -f hls pipe: | hls`
+      // const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c copy -movflags empty_moov -f hls pipe: | hls`
+      //// THE GOOD ONE BELOW \\\\\\\
+      const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c copy -movflags empty_moov -f mp4 pipe:1 | DO SOMETHING HERE!!`
+      // const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c copy testfile.mp4 -movflags empty_moov -f mp4 pipe:1`
+      // const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c:a aac copy -f mp4 pipe:1 test.mp4`
+      // const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -f mp4 -c copy pipe:1 | mp4`
+      // const frameCommand = `ffmpeg -ss ${“00:“+start} -to ${“00:“+end} -i ./public/images/CoolVideo.mp4 -f mp4 -c copy pipe:1 | base64`
       exec(
         frameCommand, 
-        {maxBuffer: 10240*5000},
+        {maxBuffer: 1024*500},
         (error, stdout, stderr) => {
           if(error) {
             console.log(`error ${error.message}`);
@@ -62,6 +73,7 @@ router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', function(req, re
           if(stderr) {
             console.log(`stderr: ${stderr}`);
           }
+          // const out = stdout.toString('base64')
           console.log('std out', stdout)
           res.render('gop-detail', {
             clip: stdout
