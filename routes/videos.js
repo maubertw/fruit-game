@@ -55,14 +55,14 @@ router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', function(req, re
       const start = utilFunctions.getBestEffortTimestampTime(iFrames, frame);
       const end = utilFunctions.getBestEffortTimestampTime(iFrames, frame+1);
       // Build and execute the command to get the json
-      // const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c copy ./public/images/output6.mp4`
+      // const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c copy -f mp4 /dev/null`
       // const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c copy -movflags empty_moov -f hls pipe: | hls`
       //// THE GOOD ONE BELOW \\\\\\\
-      const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c copy -movflags empty_moov -f mp4 pipe:1 | DO SOMETHING HERE!!`
+      const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -movflags qcfaststart -movflags empty_moov -c copy -f mp4 pipe:`
       // const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c copy testfile.mp4 -movflags empty_moov -f mp4 pipe:1`
       // const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c:a aac copy -f mp4 pipe:1 test.mp4`
       // const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -f mp4 -c copy pipe:1 | mp4`
-      // const frameCommand = `ffmpeg -ss ${“00:“+start} -to ${“00:“+end} -i ./public/images/CoolVideo.mp4 -f mp4 -c copy pipe:1 | base64`
+   // const frameCommand = `ffmpeg -ss ${“00:“+start} -to ${“00:“+end} -i ./public/images/CoolVideo.mp4 -f mp4 -c copy http://localhost:3000/CoolVideo.mp4/group-of-pictures/4.mp4 `
       exec(
         frameCommand, 
         {maxBuffer: 1024*500},
@@ -74,10 +74,13 @@ router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', function(req, re
             console.log(`stderr: ${stderr}`);
           }
           // const out = stdout.toString('base64')
-          console.log('std out', stdout)
-          res.render('gop-detail', {
-            clip: stdout
-          })
+          // console.log('std out', stdout)
+          // res.send(stdout)
+          res.set('Content-Type', 'video/mp4')
+          res.sendFile('CoolVideo.mp4', {root: '.'})
+          // res.render('gop-detail', {
+          //   clip: stdout
+          // })
         });
   });
 });
