@@ -2,6 +2,9 @@ let express = require('express');
 let router = express.Router();
 const { exec } = require('child_process');
 const utilFunctions = require('../public/javascripts/utils');
+const fs = require('fs');
+const ffmpeg = require('fluent-ffmpeg');
+
 
 // two helper string that I found: https://stackoverflow.com/questions/22908987/send-ffmpeg-segmented-files-to-remote-location
 // ffmpeg -i CoolVideo.mp4 -map 0 -codec:v libx264 -codec:a mp4 -f segment -flags -global_header -segment_format mpegts -segment_time 10 "http://localhost/3000"segment%03d.ts
@@ -28,73 +31,34 @@ router.get('/:videoId.mp4/group-of-pictures.json', function(req, res, next) {
     });
   });
   
-  
-// GET ONE GOP  
-router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', function(req, res, next) {
-  // TODO:
-  // SEND TO CORRECT PAGE
-  // DONT WRITE TO DISk
 
-  // this is writting a single file to disk so far from timestamp to timestamp
-  const command = `"ffprobe" -show_frames -print_format json ./public/images/${req.params.videoName + '.mp4'}`
-  exec(
-    command, 
-    {maxBuffer: 10240 * 5000},
-    (error, stdout, stderr) => {
-      if (error) {
-          console.log(`error: ${error.message}`);
-      }
-      if (stderr) {
-          console.log(`stderr: ${stderr}`);
-      }
-      // Parse data from stdout and filter for the iFrames
-      const data = JSON.parse(stdout.toString())['frames'];
-      const iFrames = utilFunctions.filterIFrames(data);
-      // Get the desired index and grab the timestamps from it and the following frame
-      const frame = parseInt(req.params.groupIndex);
-      const start = utilFunctions.getBestEffortTimestampTime(iFrames, frame);
-      const end = utilFunctions.getBestEffortTimestampTime(iFrames, frame+1);
-      // Build and execute the command to get the json
-      // const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c copy -f mp4 /dev/null`
-      // const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c copy -movflags empty_moov -f hls pipe: | hls`
-      //// THE GOOD ONE BELOW \\\\\\\
-      const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -movflags qcfaststart -movflags empty_moov -c copy -f mp4 pipe:`
-      // const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c copy testfile.mp4 -movflags empty_moov -f mp4 pipe:1`
-      // const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -c:a aac copy -f mp4 pipe:1 test.mp4`
-      // const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -f mp4 -c copy pipe:1 | mp4`
-   // const frameCommand = `ffmpeg -ss ${“00:“+start} -to ${“00:“+end} -i ./public/images/CoolVideo.mp4 -f mp4 -c copy http://localhost:3000/CoolVideo.mp4/group-of-pictures/4.mp4 `
-      exec(
-        frameCommand, 
-        {maxBuffer: 1024*500},
-        (error, stdout, stderr) => {
-          if(error) {
-            console.log(`error ${error.message}`);
-          }
-          if(stderr) {
-            console.log(`stderr: ${stderr}`);
-          }
-          // const out = stdout.toString('base64')
-          // console.log('std out', stdout)
-          // res.send(stdout)
-          res.set('Content-Type', 'video/mp4')
-          res.sendFile('CoolVideo.mp4', {root: '.'})
-          // res.render('gop-detail', {
-          //   clip: stdout
-          // })
-        });
-  });
+  // notes:
+  // see if we can pipe the output into another ffmpeg process or pipe to stdin
+  
+  // TRY THIS NEXT!!!
+  // https://stackoverflow.com/questions/33725893/how-do-you-use-node-js-to-stream-an-mp4-file-with-ffmpeg
+
+
+
+ // -ss 00:10.667969 -to 00:14.667969
+
+router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', async function(req, res, next) {
+  try {
+    res.contentType = 'video/mp4'
+    const readStream = fs.createReadStream("./public/images/CoolVideo.mp4");
+    ffmpeg(readStream)
+    .setStartTime('00:10.667969')
+    .setDuration('00:14.667969')
+    .addOutputOptions('-movflags +frag_keyframe+separate_moof+omit_tfhd_offset+empty_moov')
+    .format('mp4')
+    .pipe(res);   
+  } catch(e) {
+    console.log('there was an error getting your clip ', e)
+    next(e);
+  }    
 });
 
 
-/* GET home page. */
-// router.get('/', function(req, res, next) {
-//   res.render('index', { 
-//     title: 'Express', 
-//     msg: 'Mary and her coding',
-//     values: ['hello', 'world', 'heeeeeeeyyyy!!!', 'zomsfhivn'],
-//   });
-// });
-  
 // GET All GOP
 // -movflags frag_keyframe: https://ffmpeg.org/ffmpeg-formats.html
 // Start a new fragment at each video keyframe.
@@ -106,6 +70,123 @@ router.get('/:videoName.mp4/group-of-pictures', function(req, res, next) {
 })
 
 module.exports = router;
+
+  // OLD WIP
+  // router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', async function(req, res, next) {
+  //       const execP = util.promisify(require('child_process').exec);
+  //       try {
+  //         const frameCommand = `ffmpeg -ss 00:10.667969 -to 00:14.667969 -i ./public/images/CoolVideo.mp4 -movflags qcfaststart -movflags empty_moov -c copy -f mp4 pipe:1`
+  //         res.contentType('video/mp4')
+  //         const clip_command = await exec(
+  //           frameCommand, 
+  //           {maxBuffer: 10240*50000},
+  //           (error, stdout, stderr) => {
+  //             if(error) {
+  //               console.log(`error ${error.message}`);
+  //             }
+  //             if(stderr) {
+  //               console.log(`stderr: ${stderr}`);
+  //             }
+  //             return stdout
+  //           })
+  //           clip_command.stdout.on('data', (data) => {
+  //             console.log(`stdout: `);
+  //           });
+            
+  //           clip_command.stderr.on('data', (data) => {
+  //             // console.error(`stderr: ${data}`);
+  //           });
+            
+  //           clip_command.on('close', (code) => {
+  //             console.log(`child process exited with code ${code}`);
+  //           });
+  //       } catch(e) {
+  //         console.log('there was an error getting your clip ', e)
+  //         next(e);
+  //       }    
+  // });
+
+
+
+
+
+
+
+// GET ONE GOP  - SAVE FOR LATER
+// router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', function(req, res, next) {
+//   // TODO:
+//   // SEND TO CORRECT PAGE
+//   // DONT WRITE TO DISk
+
+//   // this is writting a single file to disk so far from timestamp to timestamp
+//   const command = `"ffprobe" -show_frames -print_format json ./public/images/${req.params.videoName + '.mp4'}`
+//   // const jsonData = 
+//   const test = exec(
+//     command, 
+//     {maxBuffer: 10240 * 5000},
+//     (error, stdout, stderr) => {
+//       if (error) {
+//           console.log(`error: ${error.message}`);
+//       }
+//       if (stderr) {
+//           console.log(`stderr: ${stderr}`);
+//       }
+//       // Parse data from stdout and filter for the iFrames
+//       const data = JSON.parse(stdout.toString())['frames'];
+//       const iFrames = utilFunctions.filterIFrames(data);
+//       // Get the desired index and grab the timestamps from it and the following frame
+//       const frame = parseInt(req.params.groupIndex);
+//       const start = utilFunctions.getBestEffortTimestampTime(iFrames, frame);
+//       const end = utilFunctions.getBestEffortTimestampTime(iFrames, frame+1);
+//       //// THE GOOD ONE BELOW \\\\\\\
+//       const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -movflags qcfaststart -movflags empty_moov -c copy -f mp4 pipe:`
+      
+//       console.log('coommmand ', frameCommand)
+//       const promise = util.promisify(exec(
+//         frameCommand, 
+//         {maxBuffer: 1024*50000},
+//         (error, stdout, stderr) => {
+//           if(error) {
+//             console.log(`error ${error.message}`);
+//           }
+//           if(stderr) {
+//             console.log(`stderr: ${stderr}`);
+//           }
+//           return stdout
+//         }));
+//       promise.then((data) => {
+//         console.log('got child promise ', data)
+//         res.write(data)
+//         res.contentType('video/mp4')
+//         res.send()
+//       })
+//   });
+//   // let file = null
+//   // test.stdout.on('data', (data) => {
+//   //   console.log('data', data)
+//   //   res.write(data)
+//   //   res.contentType('video/mp4')
+//   //   res.send()
+//   // })
+// });
+
+
+// THOUGHTS:
+// NEED TO GET THE RETURN VALUE FROM THE CHILD PROCESS
+// OR
+// GET THE CHUNKED DATA TO WRITE
+
+
+/* GET home page. */
+// router.get('/', function(req, res, next) {
+//   res.render('index', { 
+//     title: 'Express', 
+//     msg: 'Mary and her coding',
+//     values: ['hello', 'world', 'heeeeeeeyyyy!!!', 'zomsfhivn'],
+//   });
+// });
+  
+
 
 
 
