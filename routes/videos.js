@@ -25,12 +25,8 @@ router.get('/:videoId.mp4/group-of-pictures.json', function(req, res, next) {
     });
   });
   
-  
-  // get the clip - add back
 
-  // -ss 00:10.667969 -to 00:14.667969
-
-
+// SINGLE CLIP
 router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', async function(req, res, next) {
   const params = req.params
   const command = `"ffprobe" -show_frames -print_format json ./public/images/${params.videoName + '.mp4'}`
@@ -53,7 +49,6 @@ router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', async function(r
         res.send(`This video only has ${lastFrame} frames, your request is out of range`)
         return;
       }
-      console.log('fraaame', lastFrame)
       const frame = +req.params.groupIndex
       const start = iFrames[frame].best_effort_timestamp_time
       const end = iFrames[frame+1].best_effort_timestamp_time
@@ -74,25 +69,8 @@ router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', async function(r
       }); 
 });
 
-// WORKING
-// });
-// try {
-//   const readStream = fs.createReadStream("./public/images/CoolVideo.mp4");
-//   res.contentType('mp4')
-//   ffmpeg(readStream)
-//     .setStartTime(start)
-//     .setDuration(end)
-//     .addOutputOptions('-movflags +frag_keyframe+separate_moof+omit_tfhd_offset+empty_moov')
-//     .format('mp4')
-//     .on('end', (data) => {
-//       console.log('file written successfully', data)
-//     })
-//     .on('error', function(e) {
-//       console.log('there was an error ', e)
-//     })
-//     .pipe(res, {end: true})     
-// } catch(e) {
-
+// for getting just iframes:
+// https://superuser.com/questions/669716/how-to-extract-all-key-frames-from-a-video-clip
 
 
 // GET All GOP
@@ -100,11 +78,6 @@ router.get('/:videoName.mp4/group-of-pictures', function(req, res, next) {
   const command = 'ffmpeg -i CoolVideo.mp4 -acodec copy -f segment -vcodec copy -reset_timestamps 1 -map 0 OUTPUT%d.mp4'
   console.log('command', command)
 })
-
-
-router.get('/', function(req, res, next) {
-  res.render('videos');
-});
 
 
 module.exports = router;
