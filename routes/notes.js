@@ -1,3 +1,64 @@
+// WORKING
+// });
+// try {
+//   const readStream = fs.createReadStream("./public/images/CoolVideo.mp4");
+//   res.contentType('mp4')
+//   ffmpeg(readStream)
+//     .setStartTime(start)
+//     .setDuration(end)
+//     .addOutputOptions('-movflags +frag_keyframe+separate_moof+omit_tfhd_offset+empty_moov')
+//     .format('mp4')
+//     .on('end', (data) => {
+//       console.log('file written successfully', data)
+//     })
+//     .on('error', function(e) {
+//       console.log('there was an error ', e)
+//     })
+//     .pipe(res, {end: true})     
+// } catch(e) {
+
+
+// LAST WORKING PIPE FILE DIRECTLY TO RES
+// const readStream = fs.createReadStream("./public/images/CoolVideo.mp4");
+// ffmpeg(readStream)
+// .setStartTime('00:10.667969')
+// .setDuration('00:14.667969')
+// .addOutputOptions('-movflags +frag_keyframe+separate_moof+omit_tfhd_offset+empty_moov')
+// .format('mp4')
+// .pipe(res);   
+// } catch(e) {
+// console.log('there was an error getting your clip ', e)
+// next(e);
+// }   
+  
+
+    // res.on('end', () => {
+    //   console.log('response ', res)
+    // })
+    // res.contentType = 'video/mp4';
+    // https://stackoverflow.com/questions/32083522/how-view-mime-type-in-chrome-its-showing-document-under-network-tab
+    // RE THIS RESPONSE IS JUST A DOCUMENT, HAVE TO MAKE IT A PAGE I GUESS?
+//     const writer = getWritableStreamSomehow();
+// const reader = getReadableStreamSomehow();
+// writer.on('pipe', (src) => {
+//   console.log('Something is piping into the writer.');
+//   assert.equal(src, reader);
+// });
+// reader.pipe(writer);
+
+// GET INTO THE EVENT CYCLE
+    
+    // res.on('pipe', (src) => {
+    //   // console.log('source  ', src)
+    //   res.setHeader('Content-Type', 'video/mp4')
+    //   res.setHeader('Content-Disposition', 'attachment')
+    //   res.attachment(src, 'clip4.mp4')
+    //   res.send()
+    // })
+    // res.attachment()
+  
+  
+  
   // TRY THIS NEXT!!!
   // https://stackoverflow.com/questions/33725893/how-do-you-use-node-js-to-stream-an-mp4-file-with-ffmpeg  
   
@@ -49,25 +110,25 @@
 //   // DONT WRITE TO DISk
 
 //   // this is writting a single file to disk so far from timestamp to timestamp
-//   const command = `"ffprobe" -show_frames -print_format json ./public/images/${req.params.videoName + '.mp4'}`
-//   // const jsonData = 
-//   const test = exec(
-//     command, 
-//     {maxBuffer: 10240 * 5000},
-//     (error, stdout, stderr) => {
-//       if (error) {
-//           console.log(`error: ${error.message}`);
-//       }
-//       if (stderr) {
-//           console.log(`stderr: ${stderr}`);
-//       }
-//       // Parse data from stdout and filter for the iFrames
-//       const data = JSON.parse(stdout.toString())['frames'];
-//       const iFrames = utilFunctions.filterIFrames(data);
-//       // Get the desired index and grab the timestamps from it and the following frame
-//       const frame = parseInt(req.params.groupIndex);
-//       const start = utilFunctions.getBestEffortTimestampTime(iFrames, frame);
-//       const end = utilFunctions.getBestEffortTimestampTime(iFrames, frame+1);
+  // const command = `"ffprobe" -show_frames -print_format json ./public/images/${req.params.videoName + '.mp4'}`
+  // // const jsonData = 
+  // const test = exec(
+  //   command, 
+  //   {maxBuffer: 10240 * 5000},
+  //   (error, stdout, stderr) => {
+  //     if (error) {
+  //         console.log(`error: ${error.message}`);
+  //     }
+  //     if (stderr) {
+  //         console.log(`stderr: ${stderr}`);
+  //     }
+  //     // Parse data from stdout and filter for the iFrames
+  //     const data = JSON.parse(stdout.toString())['frames'];
+  //     const iFrames = utilFunctions.filterIFrames(data);
+  //     // Get the desired index and grab the timestamps from it and the following frame
+  //     const frame = parseInt(req.params.groupIndex);
+  //     const start = utilFunctions.getBestEffortTimestampTime(iFrames, frame);
+  //     const end = utilFunctions.getBestEffortTimestampTime(iFrames, frame+1);
 //       //// THE GOOD ONE BELOW \\\\\\\
 //       const frameCommand = `ffmpeg -ss ${"00:"+start} -to ${"00:"+end} -i ./public/images/CoolVideo.mp4 -movflags qcfaststart -movflags empty_moov -c copy -f mp4 pipe:`
       
