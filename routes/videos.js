@@ -4,6 +4,7 @@ const { exec } = require('child_process');
 const utilFunctions = require('../public/javascripts/utils');
 const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
+const { response } = require('express');
 
 
 // GET JSON DATA
@@ -69,15 +70,13 @@ router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', async function(r
       }); 
 });
 
-// for getting just iframes:
-// https://superuser.com/questions/669716/how-to-extract-all-key-frames-from-a-video-clip
 
-
-// GET All GOP
 router.get('/:videoName.mp4/group-of-pictures', function(req, res, next) {
-  const command = 'ffmpeg -i CoolVideo.mp4 -acodec copy -f segment -vcodec copy -reset_timestamps 1 -map 0 OUTPUT%d.mp4'
-  console.log('command', command)
+  res.render('videos')
 })
+
+
+
 
 
 module.exports = router;

@@ -1,3 +1,113 @@
+
+// for getting just iframes:
+// https://superuser.com/questions/669716/how-to-extract-all-key-frames-from-a-video-clip
+
+
+// GET All GOP
+// router.get('/:videoName.mp4/group-of-pictures', function(req, res, next) {
+//   const command = 'ffmpeg -i CoolVideo.mp4 -acodec copy -f segment -vcodec copy -reset_timestamps 1 -map 0 OUTPUT%d.mp4'
+//   console.log('command', command)
+// })
+
+// router.get('/:videoName.mp4/group-of-pictures', function(req, res, next) {
+//   const params = req.params
+//   const command = `"ffprobe" -show_frames -print_format json ./public/images/CoolVideo.mp4`
+//   exec(
+//     command, 
+//     {maxBuffer: 10240 * 5000}, 
+//     (error, stdout, stderr) => {
+//         if (error) {
+//           console.log(`error: ${error.message}`);
+//         }
+//         if (stderr) {
+//           console.log(`stderr: ${stderr}`);
+//         }
+//         const data = JSON.parse(stdout.toString())['frames']
+        
+//         const iFrames = utilFunctions.filterIFrames(data);
+//         const lastFrame = iFrames.length;
+//         // if the last frame is requested we need to go to the end which will be the end time stamp of the movie
+//         if (params.groupIndex > lastFrame) {
+//           res.send(`This video only has ${lastFrame} frames, your request is out of range`)
+//           return;
+//         }
+//         const clips = []
+//         for(let i = 0; i < 6; i++) {
+//           // let clip = ''
+//           // const name = `clip${i}`
+//           const start = iFrames[i].best_effort_timestamp_time
+//           const end = iFrames[i+1].best_effort_timestamp_time
+//           const readStream = fs.createReadStream("./public/images/CoolVideo.mp4");
+//           ffmpeg(readStream)
+//           .setStartTime(start)
+//           .setDuration(end)
+//           .addOutputOptions('-movflags +frag_keyframe+separate_moof+omit_tfhd_offset+empty_moov')
+//           .format('mp4')
+//           .on('data', function(chunk){
+//             console.log('got some data', chunk)
+//           })
+//           .on('end', (data) => {
+//             console.log('file written successfully', data)  
+//             // clips.push(clip)
+//           })
+//           .on('error', function(e) {
+//             console.log('there was an error ', e)
+//           })
+//           .on('pipe', function(src){
+//             console.log('clips ', clips)
+//             clips.push(src)
+//           })
+//           .pipe()
+//         }
+//         res.render(
+//           'videos',
+//           {clips}
+//         )
+//       })
+// });
+
+// router.get('/:videoName.mp4/group-of-pictures', function(req, res, next) {
+//   try {
+
+//   //   const params = req.params
+//   //   const count = 1
+//   //   const readStream = fs.createReadStream("./public/images/CoolVideo.mp4");
+//   //   const writeable = fs.createWriteStream({objectMode: true})
+//   //       ffmpeg(readStream)
+//   //         .addOutputOptions(`copy -f segment -vcodec copy`)
+//   //         .format('mp4')
+//   //         .on('error', function(e) {
+//   //           console.log('there was an error ', e)
+//   //         })
+//   //         .on('data', function(data) {
+//   //           console.log('got one ', data)
+//   //         })
+//   //         .on('end', function(data) {
+//   //           console.log('data', data)
+//   //           res.render('videos', {
+//   //             clips: data
+//   //           })
+//   //         })
+//   //         // .on('pipe', function(src) {
+//   //         //    res.render('videos', {
+//   //         //      clips: src
+//   //         //    })
+//   //         // })
+//   //         .pipe()
+//   // } catch(e) {
+//   //   console.log('there was an error getting you clips ', e)
+//   // }
+//   //       // .pipe(res) 
+// } catch(e) {
+//   console.l
+// }); 
+
+
+
+
+
+
+
 // WORKING
 // });
 // try {
