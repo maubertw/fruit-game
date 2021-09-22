@@ -1,3 +1,39 @@
+/// OLD UTILS
+
+// const getIframeJson = (videoId) => {
+//   const command = `"ffprobe" -show_frames -print_format json ./public/images/${videoId + '.mp4'}`
+//   const process = execSync(
+//       command, 
+//       {maxBuffer: 10240 * 5000}, 
+//       (error, stdout, stderr) => {
+//         if (error) {
+//           console.log(`error: ${error.message}`);
+//         }
+//         if (stderr) {
+//           console.log(`stderr: ${stderr}`);
+//         }
+//       });
+//     const json = JSON.parse(process.toString('utf8'))['frames'];
+//     return utilFunctions.filterIFrames(json);
+// };
+
+
+// const filterIFrames = (data) => {
+//   const iFrames = [];
+//   for(let d in data) {
+//       if(data[d].pict_type == 'I') {
+//           iFrames.push(data[d]);
+//       }
+//   }
+//   return iFrames;
+// }
+
+
+
+
+
+
+
 
 // for getting just iframes:
 // https://superuser.com/questions/669716/how-to-extract-all-key-frames-from-a-video-clip

@@ -1,6 +1,6 @@
 let express = require('express');
 let router = express.Router();
-const { exec } = require('child_process');
+const { exec, execSync } = require('child_process');
 const utilFunctions = require('../public/javascripts/utils');
 const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
@@ -8,10 +8,11 @@ const { response } = require('express');
 
 
 // GET JSON DATA
-router.get('/:videoId.mp4/group-of-pictures.json', function(req, res, next) {
+// change this into a method that can be used by the other ones
+router.get('/:videoId.mp4/group-of-pictures.json', async function(req, res, next) {
   const params = req.params
   const command = `"ffprobe" -show_frames -print_format json ./public/images/${params.videoId + '.mp4'}`
-  exec(
+  const value = execSync(
     command, 
     {maxBuffer: 10240 * 5000}, 
     (error, stdout, stderr) => {
@@ -21,10 +22,15 @@ router.get('/:videoId.mp4/group-of-pictures.json', function(req, res, next) {
       if (stderr) {
         console.log(`stderr: ${stderr}`);
       }
-      const data = JSON.parse(stdout.toString())['frames']
-      res.send(utilFunctions.filterIFrames(data));
+      // const data = JSON.parse(stdout.toString())['frames']
+      // return data
+      // res.send(utilFunctions.filterIFrames(data));
     });
-  });
+  const json = JSON.parse(value.toString('utf8'))['frames'];
+  // console.log('dataaaaa', utilFunctions.filterIFrames(json))
+  res.send(utilFunctions.filterIFrames(json));
+  // res.send(json)
+});
   
 
 // SINGLE CLIP
@@ -53,6 +59,8 @@ router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', async function(r
       const frame = +req.params.groupIndex
       const start = iFrames[frame].best_effort_timestamp_time
       const end = iFrames[frame+1].best_effort_timestamp_time
+
+      // FROM HERE IS WHERE WE START THIS ROUTE
       const readStream = fs.createReadStream("./public/images/CoolVideo.mp4");
       res.contentType('mp4')
       ffmpeg(readStream)
@@ -72,7 +80,12 @@ router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', async function(r
 
 
 router.get('/:videoName.mp4/group-of-pictures', function(req, res, next) {
-  res.render('videos')
+  // GET JSON FROM VIDEO
+  // INCLUDE THE SOURCE URL FOR EACH ONE
+  const clipData = [];
+  res.render('videos', {
+    clipData
+  })
 })
 
 
