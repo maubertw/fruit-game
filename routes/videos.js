@@ -22,14 +22,9 @@ router.get('/:videoId.mp4/group-of-pictures.json', async function(req, res, next
       if (stderr) {
         console.log(`stderr: ${stderr}`);
       }
-      // const data = JSON.parse(stdout.toString())['frames']
-      // return data
-      // res.send(utilFunctions.filterIFrames(data));
-    });
+  });
   const json = JSON.parse(value.toString('utf8'))['frames'];
-  // console.log('dataaaaa', utilFunctions.filterIFrames(json))
   res.send(utilFunctions.filterIFrames(json));
-  // res.send(json)
 });
   
 

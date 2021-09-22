@@ -1,18 +1,12 @@
 const { execSync } = require('child_process');
 
-
-
-const getBestEffortTimestampTime = (iFrames, startIndex) => {
-    return iFrames[startIndex].best_effort_timestamp_time;
-}
-
-
 interface Video {
     path: string;
     fileName: string;
 }
 
 class Video {
+
     constructor(fileName) {
         this.path = './public/images';
         this.fileName = fileName;  // example: someVideo.mp4
@@ -39,21 +33,6 @@ class Video {
         let start 
         let end;
         return { start, end }
-    }
-
-    getclip = (frameIndex: Number, writeStream): any { // returns .mp4
-        // const start = iFrames[frame].best_effort_timestamp_time
-        // const end = iFrames[frame+1].best_effort_timestamp_time
-        // const readStream = fs.createReadStream("./public/images/CoolVideo.mp4");
-       
-       
-       
-        // get the start and end frame
-       // we check to make sure it's in range
-       // if last we will have to calc from the end
-
-       // read stream the vid
-
     }
 
     // STATIC METHODS???????
