@@ -16,7 +16,6 @@ class Video {
 
     getIframeJson = () => {
         const command = `"ffprobe" -show_frames -print_format json ${this.path}.mp4`
-        console.log('commmand', command)
         const process = execSync(
             command, 
             {maxBuffer: 10240 * 50000}, 
@@ -34,22 +33,26 @@ class Video {
     }
 
     getSingleGop = (index, writeStream) => {
-        const { start, end } = this.getStartEndGop(index);
-        const readStream = fs.createReadStream(this.path + '.mp4');
-        writeStream.setHeader('Connection', 'Keep-Alive')
-        writeStream.contentType('mp4')
-        ffmpeg(readStream)
-          .setStartTime(start)
-          .setDuration(end)
-          .addOutputOptions('-movflags +frag_keyframe+separate_moof+omit_tfhd_offset+empty_moov')
-          .format('mp4')
-          .on('end', (data) => {
-            console.log('file written successfully')  
-          })
-          .on('error', (e) => {
-            console.log('THERE WAS AN ERROR GETTING SINGLE CLIP', e)
-          })
-          .pipe(writeStream, {end: true})
+        try {
+            const { start, end } = this.getStartEndGop(index);
+            const readStream = fs.createReadStream(this.path + '.mp4');
+            writeStream.setHeader('Connection', 'Keep-Alive')
+            writeStream.contentType('mp4')
+            ffmpeg(readStream)
+              .setStartTime(start)
+              .setDuration(end)
+              .addOutputOptions('-movflags +frag_keyframe+separate_moof+omit_tfhd_offset+empty_moov')
+              .format('mp4')
+              .on('end', (data) => {
+                console.log('file written successfully')  
+              })
+              .on('error', (e) => {
+                console.log('THERE WAS AN ERROR GETTING SINGLE CLIP', e)
+              })
+              .pipe(writeStream, {end: true})
+        } catch (e) {
+            console.log('get single gop process failed ', e)
+        }
     }
 
     getInspectorData = () => {
