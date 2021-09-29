@@ -1,3 +1,46 @@
+
+//- div
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/0.mp4" width="176" height="132")
+//- div
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/1.mp4" width="176" height="132")
+//- div  
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/2.mp4" width="176" height="132")
+//- div  
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/3.mp4" width="176" height="132")
+//- div  
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/4.mp4" width="176" height="132")
+//- div
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/5.mp4" width="176" height="132")
+//- div
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/6.mp4" width="176" height="132")
+//- div
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/7.mp4" width="176" height="132")
+//- div  
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/8.mp4" width="176" height="132")
+//- div  
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/9.mp4" width="176" height="132")
+//- div
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/10.mp4" width="176" height="132")
+//- div
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/11.mp4" width="176" height="132")
+//- div
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/12.mp4" width="176" height="132")
+//- div
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/13.mp4" width="176" height="132")
+//- div  
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/14.mp4" width="176" height="132")
+//- div  
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/15.mp4" width="176" height="132")
+//- div
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/16.mp4" width="176" height="132")
+//- div
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/17.mp4" width="176" height="132")
+//- div  
+//-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/18.mp4" width="176" height="132")
+
+
+
+
 //// WANT TO GET RID OF THIS CALL TO SAVE ROOM
 // getDuration = () => {
 //   const command = `"ffprobe" -of json -show_streams -show_format ${this.path}.mp4`

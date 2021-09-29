@@ -1,16 +1,10 @@
 extends layout
 block content
 
+
   h1 Cool Video Group of Pictures
   div(style={display: 'flex', width: "600px"})
   each val, index in inspectorData 
     h1 Group #{index}
     p from #{val.start} to #{val.end}
-    video(type="video/mp4" controls src=val.url width="176" height="132")
-
-  
-
-  
-
-
-  
+    video(type="video/mp4" controls src=val.url width="176" height="132")  

@@ -32,11 +32,13 @@ class Video {
           return this.filterIFrames(json);
     }
 
+    // -movflags +frag_keyframe+separate_moof+omit_tfhd_offset+empty_moov
+    // TODO: CHANGE BACK TO FFMPEG PROCESS - ADD START END TO ABOVE
     getSingleGop = async (index, writeStream) => {
         try {
             const { start, end } = this.getStartEndGop(index);
             const readStream = await fs.createReadStream(this.path + '.mp4');
-            writeStream.setHeader('Connection', 'Keep-Alive')
+            //writeStream.setHeader('Connection', 'Keep-Alive')
             writeStream.contentType('mp4')
             ffmpeg(readStream)
               .setStartTime(start)
