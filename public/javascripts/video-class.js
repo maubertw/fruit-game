@@ -32,10 +32,10 @@ class Video {
           return this.filterIFrames(json);
     }
 
-    getSingleGop = (index, writeStream) => {
+    getSingleGop = async (index, writeStream) => {
         try {
             const { start, end } = this.getStartEndGop(index);
-            const readStream = fs.createReadStream(this.path + '.mp4');
+            const readStream = await fs.createReadStream(this.path + '.mp4');
             writeStream.setHeader('Connection', 'Keep-Alive')
             writeStream.contentType('mp4')
             ffmpeg(readStream)
@@ -45,6 +45,9 @@ class Video {
               .format('mp4')
               .on('end', (data) => {
                 console.log('file written successfully')  
+              })
+              .on('stderr', (err) => {
+                  console.log('there was some kind of error', err)
               })
               .on('error', (e) => {
                 console.log('THERE WAS AN ERROR GETTING SINGLE CLIP', e)
@@ -80,7 +83,7 @@ class Video {
         }
         const groupData = this.iframeJson[frameIndex];
         const start = groupData.best_effort_timestamp_time;
-        const end = +start + +groupData.pkt_duration_time;
+        const end = +start + 3//+groupData.pkt_duration_time;
         return { start, end };
     }
 
