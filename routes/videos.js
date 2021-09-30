@@ -3,40 +3,42 @@ let router = express.Router();
 const { Video } = require('../public/javascripts/video-class');
 
 
-
+// Get the json data for the video
 router.get('/:videoId.mp4/group-of-pictures.json', async function(req, res, next) {
   try {
     const video = new Video(req.params.videoId);
     res.send(video.json);
   } catch (e) {
     console.log('ERROR IN GET JSON, ', e)
-    next();
+    next(e);
   }
 });
 
 
+// Get a single GOP by index
 router.get('/:videoName.mp4/group-of-pictures/:groupIndex.mp4', (req, res, next) => { 
   try {
     const video = new Video(req.params.videoName);
     video.getSingleGop(+req.params.groupIndex, res);
   } catch (e) {
     console.log('ERROR IN GET CLIP: ', e);
-    next();
+    next(e);
   }
 });
 
 
+// Get html page with each group of pictures (playable mp4) and accompanying metadata
 router.get('/:videoName.mp4/group-of-pictures', (req, res, next) => {
   try {
     const video = new Video(req.params.videoName);
     const inspectorData = video.getInspectorData();
-    res.setHeader('Connection', 'Keep-Alive')
+    res.setHeader('Connection', 'Keep-Alive');
     res.render('videos', {
-      inspectorData
-    })
+      inspectorData,
+    });
   } catch (e) {
     console.log('ERROR IN GET ALL GOP, ', e);
-    next();
+    next(e);
   }
 });
 

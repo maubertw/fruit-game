@@ -1,3 +1,8 @@
+   // -movflags +frag_keyframe+separate_moof+omit_tfhd_offset+empty_moov
+    // TODO: CHANGE BACK TO FFMPEG PROCESS - ADD START END TO ABOVE
+
+
+
 
 //- div
 //-   video(type="video/mp4" controls src="http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/0.mp4" width="176" height="132")
