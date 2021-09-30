@@ -9,7 +9,7 @@ Using ffmpeg, ffprobe, and the fluent-ffmpeg libraries to get file JSON, single 
 
 ## view the data
 -- This link will show the JSON video metadata for the CoolVideo file 
-`http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/4.mp4`
+[http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures.json](http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures.json)
 
 ## Get a single group of pictures
 -- Here you can get a single group of pictures by index
