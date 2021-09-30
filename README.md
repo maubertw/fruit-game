@@ -4,7 +4,7 @@ Using ffmpeg, ffprobe, and the fluent-ffmpeg libraries to get file JSON, single 
 ## installation
 1.  clone this respository to your local machine
 `https://github.com/maubertw/group-of-pictures.git`
-2.  Run `npm install`
+2.  Run `npm install` if you have npm locally or `npm install --save-dev nodemon` if you don't
 3.  Run `npm start`
 
 ## view the data
