@@ -8,11 +8,13 @@ Using ffmpeg, ffprobe, and the fluent-ffmpeg libraries to get file JSON, single 
 3.  Run `npm start`
 
 ## view the data
--- This link will show the JSON video metadata for the CoolVideo file 
+-- This link will show the JSON video metadata for the CoolVideo file <br/>
+
 [http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures.json](http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures.json)
 
 ## Get a single group of pictures
--- Here you can get a single group of pictures by index
+-- Here you can get a single group of pictures by index <br/>
+
 (`http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/<index>.mp4`)
 [1](http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/1.mp4)
 [2](http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/2.mp4)
