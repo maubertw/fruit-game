@@ -53,7 +53,7 @@ class Video {
             writeStream.contentType('mp4');
             ffmpeg(readStream)
               .setStartTime(start)
-              .setDuration(end)
+              .duration(end)
               // move the metadata to the front of the file so that it is streamable
               .addOutputOptions('-movflags +frag_keyframe+separate_moof+omit_tfhd_offset+empty_moov')
               .format('mp4')
@@ -61,10 +61,10 @@ class Video {
                 console.log('file written successfully');
               })
               .on('stderr', (e) => {
-                  console.log('THERE WAS AN ERROR GETTING SINGLE CLIP', e);
+                  console.log('STDERR SINGLE CLIP', e);
               })
               .on('error', (e) => {
-                console.log('THERE WAS AN ERROR GETTING SINGLE CLIP', e);
+                console.log('ERROR GETTING SINGLE CLIP', e);
               })
               // pipe the output data directly on the write stream and send the response
               .pipe(writeStream, {end: true});
@@ -78,7 +78,7 @@ class Video {
         return this.json.map((_, i) => {
             const { start, end } = this.getStartEndGop(i);
             const url = `http://localhost:3000/videos/${this.name}.mp4/group-of-pictures/${i}.mp4`;
-            return { start, end, url };
+            return { start, end: +start+end, url };
         });
     }    
 
@@ -91,7 +91,7 @@ class Video {
             if(data[j].pict_type == 'I') {
                 iFrames.push(data[j]);
             }
-        }
+        };
         return iFrames;
     }
         
@@ -101,19 +101,20 @@ class Video {
     getStartEndGop = (frameIndex) => {
         let isLastFrame = false;
         if(frameIndex > this.iframeJson.length-1) {
-            return `The frame you requested is out of range, your selection must be between 0 and  ${this.iframeJson.length-1}`;
+            return `The frame you requested is out of range, your selection must be between 0 and  ${this.json.length-1}`;
         }
         if (frameIndex === this.iframeJson.length-1) {
             isLastFrame = true;
         }
         const start = this.json[frameIndex].best_effort_timestamp_time;
-        // if this is the last clip, there is no following clip
-        // to calculate end, so instead find the length of the video
-        const end = isLastFrame ? this.getDuration() : this.json[frameIndex+1].best_effort_timestamp_time;
+        // Bug with calculating duration, so setting the duration to a constant 3 seconds
+        const end = 3; // isLastFrame ? this.getDuration() : this.json[frameIndex+1].best_effort_timestamp_time; 
         return { start, end };
     }
 
     getDuration = () => {
+        // if looking at the last clip, there is no following clip
+        // to calculate end, so instead find the length of the video
         const command = `"ffprobe" -of json -show_streams -show_format ${this.path}.mp4`;
         const process = execSync(
             command,
@@ -121,15 +122,14 @@ class Video {
             (error, stdout, stderr) => {
                 if (error) {
                     console.log(`error: ${error.message}`);
-                    }
+                }
                     if (stderr) {
                     console.log(`stderr: ${stderr}`);
-                    }
+                }
             });
             const duration = JSON.parse(process.toString('utf8')).streams[0].duration;
             return duration;   
     }
-
 
 }
 
