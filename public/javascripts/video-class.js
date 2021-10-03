@@ -5,13 +5,11 @@ const fs = require('fs');
 
 class Video {
     /**
-     * @param {string} name 
+     * @param {string} name name of the video without the path or file extention
      */
     constructor(name) {
-        this.name = name; // name of the video without the path or file extention
+        this.name = name;
         this.path = './public/images/' + this.name;
-        // we need this data to run the other operations, so we want to have it 
-        // available as soon as we instantiate the class
         this.iframeJson = this.getIframeJson(); 
     }
 
@@ -40,12 +38,11 @@ class Video {
           return this.filterIFrames(json);
     }
 
- 
+    /**
+     * @param {number} index, index of the requested GOP
+     * @param {Response} writeStream
+     */
     getSingleGop = async (index, writeStream) => { 
-        /**
-         * @param {number} index
-         * @param {Response} writeStream
-         */
         try {
             const { start, end } = this.getStartEndGop(index);
             // create a readable stream of the video file to pass to the command
@@ -61,34 +58,34 @@ class Video {
               .addOutputOptions('-movflags +frag_keyframe+separate_moof+omit_tfhd_offset+empty_moov')
               .format('mp4')
               .on('end', (data) => {
-                console.log('file written successfully')  
+                console.log('file written successfully');
               })
-              .on('stderr', (err) => {
-                  console.log('there was some kind of error', err)
+              .on('stderr', (e) => {
+                  console.log('THERE WAS AN ERROR GETTING SINGLE CLIP', e);
               })
               .on('error', (e) => {
-                console.log('THERE WAS AN ERROR GETTING SINGLE CLIP', e)
+                console.log('THERE WAS AN ERROR GETTING SINGLE CLIP', e);
               })
               // pipe the output data directly on the write stream and send the response
-              .pipe(writeStream, {end: true})
+              .pipe(writeStream, {end: true});
         } catch (e) {
-            console.log('get single gop process failed ', e)
+            console.log('get single gop process failed ', e);
         }
     }
 
     getInspectorData = () => {
         // use the iframe json to get the inspector view data and build the GOP urls for the playable clips
-        return this.iframeJson.map((frame, i) => {
+        return this.json.map((_, i) => {
             const { start, end } = this.getStartEndGop(i);
-            const url = `http://localhost:3000/videos/${this.name}.mp4/group-of-pictures/${i}.mp4`
+            const url = `http://localhost:3000/videos/${this.name}.mp4/group-of-pictures/${i}.mp4`;
             return { start, end, url };
         });
     }    
 
+    /**
+     * @param {JSON} data
+     */
     filterIFrames = (data) => {
-        /**
-         * @param {JSON} data
-         */
         const iFrames = [];
         for(let j in data) {
             if(data[j].pict_type == 'I') {
@@ -98,17 +95,39 @@ class Video {
         return iFrames;
     }
         
+    /**
+     * @param {number} frameIndex
+     */
     getStartEndGop = (frameIndex) => {
-        /**
-         * @param {number} frameIndex
-         */
+        let isLastFrame = false;
         if(frameIndex > this.iframeJson.length-1) {
-            return `The frame you requested is out of range, your selection must be between 0 and  ${this.iframeJson.length-1}`
+            return `The frame you requested is out of range, your selection must be between 0 and  ${this.iframeJson.length-1}`;
         }
-        const groupData = this.iframeJson[frameIndex];
-        const start = groupData.best_effort_timestamp_time;
-        const end = +start + 3//+groupData.pkt_duration_time;
+        if (frameIndex === this.iframeJson.length-1) {
+            isLastFrame = true;
+        }
+        const start = this.json[frameIndex].best_effort_timestamp_time;
+        // if this is the last clip, there is no following clip
+        // to calculate end, so instead find the length of the video
+        const end = isLastFrame ? this.getDuration() : this.json[frameIndex+1].best_effort_timestamp_time;
         return { start, end };
+    }
+
+    getDuration = () => {
+        const command = `"ffprobe" -of json -show_streams -show_format ${this.path}.mp4`;
+        const process = execSync(
+            command,
+            {maxBuffer: 10240 * 5000},
+            (error, stdout, stderr) => {
+                if (error) {
+                    console.log(`error: ${error.message}`);
+                    }
+                    if (stderr) {
+                    console.log(`stderr: ${stderr}`);
+                    }
+            });
+            const duration = JSON.parse(process.toString('utf8')).streams[0].duration;
+            return duration;   
     }
 
 

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www -e html,css,jade,js"
+    "start": "nodemon --max-old-space-size=16384 ./bin/www -e html,css,jade,js"
   },
   "dependencies": {
     "babel": "^6.23.0",
