@@ -1,5 +1,6 @@
 # group-of-pictures
 Using ffmpeg, ffprobe, and the fluent-ffmpeg libraries to get file JSON, single group of pictures and inspect a video file
+[Link to essay](https://docs.google.com/document/d/1jcDqj88Cn8nR3cmBwBhwMwCEIq9ifeF-eRybXkUx2-Y/edit?usp=sharing)
 
 ## installation
 1.  clone this respository to your local machine
