@@ -1,4 +1,4 @@
-# group-of-pictures
+# fruit game
 Using ffmpeg, ffprobe, and the fluent-ffmpeg libraries to get file JSON, single group of pictures and inspect a video file
 [Link to essay](https://docs.google.com/document/d/1jcDqj88Cn8nR3cmBwBhwMwCEIq9ifeF-eRybXkUx2-Y/edit?usp=sharing)
 
@@ -13,7 +13,7 @@ Using ffmpeg, ffprobe, and the fluent-ffmpeg libraries to get file JSON, single 
 
 [http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures.json](http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures.json)
 
-## get a single group of pictures
+## get a single fruit
 -- Here you can get a single group of pictures by index (excluding 0) <br/>
 
 (`http://localhost:3000/videos/CoolVideo.mp4/group-of-pictures/<index>.mp4`)
